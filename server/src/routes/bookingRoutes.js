@@ -8,4 +8,5 @@ router.get('/farmer', auth(['farmer']), bookingCtrl.getFarmerBookings);
 router.get('/nearby', auth(['driver']), bookingCtrl.getNearbyBookings);
 router.get('/:id/quotations', auth(['farmer']), require('../controllers/quotationController').getQuotationsForBooking);
 router.get('/driver', auth(['driver']), bookingCtrl.getDriverBookings);
+router.put('/:bookingId/status', auth(['driver']), bookingCtrl.updateBookingStatus);
 module.exports = router;

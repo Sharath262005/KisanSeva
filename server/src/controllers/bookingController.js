@@ -85,3 +85,52 @@ exports.getDriverBookings = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch driver bookings', error: error.message });
   }
 };
+
+exports.updateBookingStatus = async (req, res) => {
+  const { bookingId } = req.params;
+  const { status } = req.body;   // 'driver_on_way', 'in_progress', 'completed'
+  const driverId = req.user.id;
+
+  // Allowed transitions
+  const allowedStatuses = ['driver_on_way', 'in_progress', 'completed'];
+
+  if (!allowedStatuses.includes(status)) {
+    return res.status(400).json({ message: 'Invalid status' });
+  }
+
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    // Verify booking belongs to this driver and is in a valid state
+    const [bookings] = await connection.query(
+      `SELECT * FROM bookings WHERE id = ? AND driver_id = ? AND status != 'completed' AND status != 'cancelled'`,
+      [bookingId, driverId]
+    );
+    if (bookings.length === 0) {
+      await connection.rollback();
+      return res.status(400).json({ message: 'Booking not found or not editable' });
+    }
+
+    // Update status
+    await connection.query(
+      `UPDATE bookings SET status = ? WHERE id = ?`,
+      [status, bookingId]
+    );
+
+    await connection.commit();
+
+    // Notify farmer via socket
+    const io = require('../sockets').getIO();
+    io.to(`booking_${bookingId}`).emit('booking_status_update', {
+      bookingId,
+      status,
+      message: `Booking status changed to ${status.replace(/_/g, ' ')}`
+    });
+
+    res.json({ message: `Status updated to ${status}` });
+  } catch (error) {
+    await connection.rollback();
+    res.status(500).json({ message: 'Status update failed', error: error.message });
+  }
+};

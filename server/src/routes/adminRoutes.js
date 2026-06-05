@@ -23,4 +23,6 @@ router.get('/prices', adminCtrl.getApprovedPrices);
 // Stats
 router.get('/stats', adminCtrl.getDashboardStats);
 
+router.get('/drivers/approved', adminCtrl.getApprovedDrivers);
+
 module.exports = router;

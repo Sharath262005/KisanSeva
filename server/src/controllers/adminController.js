@@ -159,3 +159,17 @@ exports.getDashboardStats = async (req, res) => {
     res.status(500).json({ message: 'Stats failed', error: error.message });
   }
 };
+exports.getApprovedDrivers = async (req, res) => {
+  try {
+    const [drivers] = await pool.query(
+      `SELECT d.*, u.mobile, u.created_at AS registered_at
+       FROM drivers d
+       JOIN users u ON d.user_id = u.id
+       WHERE d.is_approved = TRUE
+       ORDER BY u.created_at DESC`
+    );
+    res.json(drivers);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch approved drivers', error: error.message });
+  }
+};

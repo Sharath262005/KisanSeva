@@ -9,6 +9,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve uploaded files (documents, field images)
+app.use('/uploads', require('express').static('uploads'));
+
 // Test route
 app.get('/', (req, res) => res.json({ message: 'KisanSeva API' }));
 
@@ -20,6 +23,8 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/surveys', require('./routes/surveyRoutes'));
 app.use('/api/payments', require('./routes/paymentRoutes'));
 app.use('/api/invoices', require('./routes/invoiceRoutes'));
+app.use('/api/drivers', require('./routes/driverRoutes'));
+app.use('/api/reviews', require('./routes/reviewRoutes'));
 // Future routes will be added here, e.g.:
 // app.use('/api/auth', require('./routes/authRoutes'));
 // app.use('/api/surveys', require('./routes/surveyRoutes'));

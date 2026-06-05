@@ -119,7 +119,7 @@ exports.refreshToken = async (req, res) => {
     const newAccessToken = jwt.sign(
       { id: decoded.id, role: decoded.role },
       process.env.JWT_SECRET,
-      { expiresIn: '15m' }
+      { expiresIn: '1h' }
     );
 
     // Optional: rotate refresh token (here we keep the same for simplicity, but best practice is to issue a new one)
@@ -144,7 +144,7 @@ function generateTokens(userId, role) {
   const accessToken = jwt.sign(
     { id: userId, role },
     process.env.JWT_SECRET,
-    { expiresIn: '15m' }
+    { expiresIn: '1h' }
   );
   const refreshToken = jwt.sign(
     { id: userId, role },
