@@ -7,7 +7,7 @@ const SurveyManagement = () => {
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
   const [analytics, setAnalytics] = useState(null);
-
+  
   const fetchSurveys = async () => {
     try {
       const { data } = await API.get('/admin/surveys');
