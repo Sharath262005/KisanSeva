@@ -134,3 +134,23 @@ exports.updateBookingStatus = async (req, res) => {
     res.status(500).json({ message: 'Status update failed', error: error.message });
   }
 };
+// Get latest driver location for a booking
+exports.getDriverLocation = async (req, res) => {
+  const { bookingId } = req.params;
+  try {
+    const [rows] = await pool.query(
+      `SELECT latitude, longitude, recorded_at
+       FROM gps_logs
+       WHERE booking_id = ?
+       ORDER BY recorded_at DESC
+       LIMIT 1`,
+      [bookingId]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'No location data yet' });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch location', error: error.message });
+  }
+};
