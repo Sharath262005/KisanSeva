@@ -7,7 +7,6 @@ const SurveyManagement = () => {
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
   const [analytics, setAnalytics] = useState(null);
-  const [selectedSurvey, setSelectedSurvey] = useState(null);
 
   const fetchSurveys = async () => {
     try {

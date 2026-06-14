@@ -5,7 +5,7 @@ import ServiceRequestForm from '../components/farmer/ServiceRequestForm';
 import BookingList from '../components/farmer/BookingList';
 
 const FarmerDashboard = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 

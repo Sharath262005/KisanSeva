@@ -16,7 +16,7 @@ const serviceTypes = [
 ];
 
 const SurveyPage = () => {
-  const { user } = useAuth();
+  useAuth(); // remove the unused user variable
   const navigate = useNavigate();
   const [survey, setSurvey] = useState(null);
   const [formData, setFormData] = useState({});

@@ -34,34 +34,36 @@ const FarmerTracking = () => {
             lng: parseFloat(booking.longitude),
           });
         }
-      } catch (err) { console.error(err); }
+      } catch (err) {
+        console.error(err);
+      }
     };
     fetchFieldLocation();
   }, [bookingId]);
 
-  // Poll location every 5 seconds
-  const fetchLocation = async () => {
-    try {
-      const { data } = await API.get(`/bookings/${bookingId}/location`);
-      if (data.latitude && data.longitude) {
-        const newPos = { lat: parseFloat(data.latitude), lng: parseFloat(data.longitude) };
-        setDriverPos(newPos);
-        if (mapRef.current) {
-          mapRef.current.panTo(newPos);
-        }
-      }
-    } catch (err) {
-      // 404 = no location yet, ignore
-    }
-  };
-
+  // Polling for driver location every 5 seconds (fallback if socket fails)
   useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const { data } = await API.get(`/bookings/${bookingId}/location`);
+        if (data.latitude && data.longitude) {
+          const newPos = { lat: parseFloat(data.latitude), lng: parseFloat(data.longitude) };
+          setDriverPos(newPos);
+          if (mapRef.current) {
+            mapRef.current.panTo(newPos);
+          }
+        }
+      } catch (err) {
+        // 404 = no location yet, ignore
+      }
+    };
+
     // Immediate fetch
     fetchLocation();
     // Poll every 5 seconds
     intervalRef.current = setInterval(fetchLocation, 5000);
     return () => clearInterval(intervalRef.current);
-  }, [bookingId]);
+  }, [bookingId]); // ✅ Correct dependency
 
   // Socket connection (optional, still listen for real-time updates)
   useEffect(() => {
@@ -100,7 +102,9 @@ const FarmerTracking = () => {
     };
   }, [bookingId, user?.id]);
 
-  const onMapLoad = (map) => { mapRef.current = map; };
+  const onMapLoad = (map) => {
+    mapRef.current = map;
+  };
 
   if (!isLoaded && hasMapKey) return <p>Loading map...</p>;
 
@@ -127,9 +131,7 @@ const FarmerTracking = () => {
           {driverPos && (
             <Marker
               position={driverPos}
-              icon={{
-                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-              }}
+              icon={{ url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' }}
             />
           )}
         </GoogleMap>
@@ -148,6 +150,7 @@ const FarmerTracking = () => {
               Field Location: Lat: {fieldPos.lat.toFixed(6)}, Lng: {fieldPos.lng.toFixed(6)}
             </p>
           )}
+          <p className="text-sm text-gray-400 mt-2">Add a Google Maps API key to see the map.</p>
         </div>
       )}
 
