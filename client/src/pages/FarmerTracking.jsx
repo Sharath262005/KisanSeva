@@ -125,13 +125,13 @@ const FarmerTracking = () => {
           {fieldPos && (
             <Marker
               position={fieldPos}
-              icon={{ url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png' }}
+              icon={{ url: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png' }}
             />
           )}
           {driverPos && (
             <Marker
               position={driverPos}
-              icon={{ url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' }}
+              icon={{ url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png' }}
             />
           )}
         </GoogleMap>
